@@ -136,7 +136,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ghost.position = CGPoint(x: monster.position.x, y: monster.position.y)
         
         let path = CGPathCreateMutable()
-        let path2 = CGPathCreateMutable()
         
         
         var minX = ghost.size.width / 2
@@ -147,31 +146,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         self.addChild(ghost)
         
-        CGPathMoveToPoint(path, nil, ghost.position.x, ghost.position.y)
-        
-        CGPathAddCurveToPoint(path, nil, 120, 300, 170, 650, 300, -10)
-        
-        CGPathMoveToPoint(path2, nil, ghost.position.x, ghost.position.y)
-        CGPathAddCurveToPoint(path2, nil, 120, 300, 170, 650, 300, -10)
+//        CGPathMoveToPoint(path, nil, ghost.position.x, ghost.position.y)
+//        
+//        CGPathAddCurveToPoint(path, nil, 120, 300, 170, 700, 300, -10)
         
         
         
-        var randomDirection = arc4random_uniform(3)
-        switch (randomDirection) {
-        case 0:
-            CGPathAddCurveToPoint(path, nil, 120, 300, 170, 650, 300, -10)
-        case 1:
-            CGPathAddCurveToPoint(path, nil, 220, 150, 170, 300, 100, -10)
-        case 2:
-            CGPathAddCurveToPoint(path, nil, 400, 650, 40, 450, 300, -10)
-        default:
-            println("oi")
-        }
+//        var randomDirection = arc4random_uniform(3)
+//        switch (randomDirection) {
+//        case 0:
+//            CGPathAddCurveToPoint(path, nil, 120, 300, 170, 650, 300, -10)
+//        case 1:
+//            CGPathAddCurveToPoint(path, nil, 220, 150, 170, 300, 100, -10)
+//        case 2:
+//            CGPathAddCurveToPoint(path, nil, 400, 650, 40, 450, 300, -10)
+//        default:
+//            println("oi")
+//        }
+//        
         
+//        var follow = SKAction.followPath(path, asOffset: false, orientToPath: true, duration: 10)
+//        var remove = SKAction.removeFromParent()
+//        ghost.runAction(SKAction.sequence([follow, remove]))
         
-        var follow = SKAction.followPath(path, asOffset: false, orientToPath: true, duration: 10)
+        let action1 = SKAction.moveTo(CGPointMake(monster.position.x , monster.position.y + 400), duration: 5)
         var remove = SKAction.removeFromParent()
-        ghost.runAction(SKAction.sequence([follow, remove]))
+        ghost.runAction(SKAction.sequence([action1, remove]))
         
         
     }
