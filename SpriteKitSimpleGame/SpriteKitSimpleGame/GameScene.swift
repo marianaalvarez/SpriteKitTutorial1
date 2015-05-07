@@ -124,8 +124,61 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
+    func addBlood(monster: SKSpriteNode) {
+        let blood = SKSpriteNode(imageNamed: "blood")
+        blood.position = CGPoint(x: monster.position.x, y: monster.position.y)
+        blood.zPosition = -1
+        self.addChild(blood)
+        
+        let ghost = SKSpriteNode(imageNamed: "monster")
+        ghost.alpha = 0.5
+        ghost.zPosition = 1
+        ghost.position = CGPoint(x: monster.position.x, y: monster.position.y)
+        
+        let path = CGPathCreateMutable()
+        let path2 = CGPathCreateMutable()
+        
+        
+        var minX = ghost.size.width / 2
+        var maxX = self.frame.size.width - ghost.size.width / 2
+        var rangeX = maxX - minX
+        var random : CGFloat = CGFloat(arc4random())
+        var actualX = (random % rangeX) + minX
+        
+        self.addChild(ghost)
+        
+        CGPathMoveToPoint(path, nil, ghost.position.x, ghost.position.y)
+        
+        CGPathAddCurveToPoint(path, nil, 120, 300, 170, 650, 300, -10)
+        
+        CGPathMoveToPoint(path2, nil, ghost.position.x, ghost.position.y)
+        CGPathAddCurveToPoint(path2, nil, 120, 300, 170, 650, 300, -10)
+        
+        
+        
+        var randomDirection = arc4random_uniform(3)
+        switch (randomDirection) {
+        case 0:
+            CGPathAddCurveToPoint(path, nil, 120, 300, 170, 650, 300, -10)
+        case 1:
+            CGPathAddCurveToPoint(path, nil, 220, 150, 170, 300, 100, -10)
+        case 2:
+            CGPathAddCurveToPoint(path, nil, 400, 650, 40, 450, 300, -10)
+        default:
+            println("oi")
+        }
+        
+        
+        var follow = SKAction.followPath(path, asOffset: false, orientToPath: true, duration: 10)
+        var remove = SKAction.removeFromParent()
+        ghost.runAction(SKAction.sequence([follow, remove]))
+        
+        
+    }
+    
+    
     override func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) {
-        runAction(SKAction.playSoundFileNamed("Sounds/pew-pew-lei.caf", waitForCompletion: false))
+        runAction(SKAction.playSoundFileNamed("Sounds/shuriken.mp3", waitForCompletion: false))
         let touch = touches.first as! UITouch
         let touchLocation = touch.locationInNode(self)
         
@@ -156,18 +209,34 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let actionMove = SKAction.moveTo(realDest, duration: 2.0)
         let actionMoveDone = SKAction.removeFromParent()
         projectile.runAction(SKAction.sequence([actionMove, actionMoveDone]))
+        let angle : CGFloat = CGFloat(M_PI)
+        let rotate = SKAction.rotateByAngle(angle, duration: 0.1)
+        let repeatAction = SKAction.repeatActionForever(rotate)
+        projectile.runAction(repeatAction, withKey: "rotate")
+
     }
     
     func projectileDidCollideWithMonster(projectile:SKSpriteNode, monster:SKSpriteNode) {
         println("Hit")
         projectile.removeFromParent()
         monster.removeFromParent()
+        runAction(SKAction.playSoundFileNamed("Sounds/Blood Squirt-SoundBible.com-1808242738.mp3", waitForCompletion: false))
+        addBlood(monster)
         monstersDestroyed++
+        if monster == 10 {
+            addBigMonster()
+        }
         if (monstersDestroyed > 30) {
             let reveal = SKTransition.flipHorizontalWithDuration(0.5)
             let gameOverScene = GameOverScene(size: self.size, won: true)
             self.view?.presentScene(gameOverScene, transition: reveal)
         }
+    }
+    
+    func addBigMonster() {
+        let bigMonster = SKSpriteNode(imageNamed: "monster")
+        bigMonster.size = CGSizeMake(600, 600)
+        self.addChild(bigMonster)
     }
     
     func didBeginContact(contact: SKPhysicsContact) {
