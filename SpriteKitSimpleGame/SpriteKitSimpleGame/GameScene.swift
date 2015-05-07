@@ -116,7 +116,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let actionMove = SKAction.moveTo(CGPoint(x: -monster.size.width/2,y: actualY), duration: NSTimeInterval(actualDuration))
         let actionMoveDone = SKAction.removeFromParent()
         let loseAction = SKAction.runBlock() {
-            let reveal = SKTransition.flipHorizontalWithDuration(0.5)
+            let reveal = SKTransition.fadeWithDuration(0.1)
             let gameOverScene = GameOverScene(size: self.size, won: false)
             self.view?.presentScene(gameOverScene, transition: reveal)
         }
@@ -223,9 +223,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         runAction(SKAction.playSoundFileNamed("Sounds/Blood Squirt-SoundBible.com-1808242738.mp3", waitForCompletion: false))
         addBlood(monster)
         monstersDestroyed++
-        if monster == 10 {
-            addBigMonster()
-        }
         if (monstersDestroyed > 30) {
             let reveal = SKTransition.flipHorizontalWithDuration(0.5)
             let gameOverScene = GameOverScene(size: self.size, won: true)
@@ -233,11 +230,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func addBigMonster() {
-        let bigMonster = SKSpriteNode(imageNamed: "monster")
-        bigMonster.size = CGSizeMake(600, 600)
-        self.addChild(bigMonster)
-    }
     
     func didBeginContact(contact: SKPhysicsContact) {
         
